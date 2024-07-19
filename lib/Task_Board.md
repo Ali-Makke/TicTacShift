@@ -1,9 +1,8 @@
+# {*(important) -(less important)}
 # To DO:
     -Check all firebase connections
     -checkout more firebase features and also learn to use 'firebase auth exeptions'
-    -Learn 'dispose' and use it if applicable
-    -plan game code structure and logic
-    -implement game logic
+    *Learn 'dispose' and use it if applicable
     -check overall project structure
     -check hosting details
     -don't let user send more then 5 challenge links within an hour unless the link was opened 
@@ -11,15 +10,19 @@
     -check label in the settings button in the home_page 
     -add sound effects(in game)
     -user can add avatar
+    *implement local match 
+    *implement online match
+    *work on REST sercive api to MySQL database
+    -
     -
     -
 
 # In Progress:
     -Briefly understand how firebase datebase works(It uses a NoSQL database)
         -what are the edge cases(eg: what happens if the player disconnects mid_game)
-    -Design and create app/game database
-    -Connect and use the database
-    -
+    *Design and create app/game database
+    *implement game logic
+    *plan game code structure and logic
     -
 
 # Review/Test:
@@ -35,7 +38,7 @@
     -Implement firebase auth service
     -Implement firebase signin and register forms
     -Add flutter_spinkit loading animation
-    -
+    -Connect and use the realtime cloud firestore database
     -
     -
 
