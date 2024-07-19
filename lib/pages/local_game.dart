@@ -31,7 +31,16 @@ class _LocalGameState extends State<LocalGame> {
               crossAxisCount: 3,
               children: List.generate(9, (index) {
                 return GestureDetector(
-                  onTap: () => hasWon() ? null : updateBoard(index),
+                  onTap: () {
+                    if (!hasWon()) {
+                      setState(() {
+                        // board = stringToBoard(boardState);
+                        updateBoard(index);
+                        currentPlayer = (currentPlayer == 'X') ? 'O' : 'X';
+                        boardToString(board); //updates boardState notation
+                      });
+                    }
+                  },
                   child: GridTile(
                       child: Container(
                     margin: const EdgeInsets.all(4.0),
@@ -57,23 +66,19 @@ class _LocalGameState extends State<LocalGame> {
   void updateBoard(int index) {
     int lastThirdMoveIndex = (moveCount ~/ 2) % 3;
     if (board[index] == '') {
-      setState(() {
-        if (currentPlayer == 'X') {
-          if (moveCount >= 6) {
-            board[player1[lastThirdMoveIndex]] = '';
-          }
-          player1[lastThirdMoveIndex] = index;
-        } else if (currentPlayer == 'O') {
-          if (moveCount >= 6) {
-            board[player2[lastThirdMoveIndex]] = '';
-          }
-          player2[lastThirdMoveIndex] = index;
+      if (currentPlayer == 'X') {
+        if (moveCount >= 6) {
+          board[player1[lastThirdMoveIndex]] = '';
         }
-        board[index] = currentPlayer;
-        moveCount++;
-        boardToString(board);
-        currentPlayer = (currentPlayer.toUpperCase() == 'X') ? 'O' : 'X';
-      });
+        player1[lastThirdMoveIndex] = index;
+      } else if (currentPlayer == 'O') {
+        if (moveCount >= 6) {
+          board[player2[lastThirdMoveIndex]] = '';
+        }
+        player2[lastThirdMoveIndex] = index;
+      }
+      board[index] = currentPlayer;
+      moveCount++;
     }
   }
 
@@ -104,9 +109,11 @@ class _LocalGameState extends State<LocalGame> {
   }
 
   void boardToString(List<String> board) {
-    setState(() {
       boardState =
           "${board.map((cell) => cell.isEmpty ? "-" : cell).join('')} $moveCount $currentPlayer";
-    });
+  }
+
+  List<String> stringToBoard(String boardState) {
+    return boardState.substring(0, 9).split('');
   }
 }

@@ -18,7 +18,7 @@
     -user can add avatar
     *design REST sercive api to MySQL database
     *implement REST sercive api to MySQL database into app
-    -
+    -make last third move a different color or make hover effect
     -
 
 # In Progress:
