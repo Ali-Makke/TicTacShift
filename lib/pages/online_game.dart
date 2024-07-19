@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class OnlineGame extends StatefulWidget {
@@ -8,8 +9,112 @@ class OnlineGame extends StatefulWidget {
 }
 
 class _OnlineGameState extends State<OnlineGame> {
+  var db = FirebaseFirestore.instance.collection('Games');
+  List<String> board = List.filled(9, '');
+  String currentPlayer = 'X';
+  int moveCount = 0;
+  List<int> player1 = [0, 0, 0];
+  List<int> player2 = [0, 0, 0];
+  String boardState = '--------- 0 X';
+
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Local Match"),
+        centerTitle: true,
+        backgroundColor: Colors.pink[400],
+      ),
+      body: Column(
+        children: [
+          Text(boardState),
+          Expanded(
+            child: GridView.count(
+              crossAxisCount: 3,
+              children: List.generate(9, (index) {
+                return GestureDetector(
+                  onTap: () {
+                    if (!hasWon()) {
+                      setState(() {
+                        updateBoard(index);
+                        currentPlayer = (currentPlayer == 'X') ? 'O' : 'X';
+                        boardToString(board); //updates boardState notation
+                      });
+                    }
+                  },
+                  child: GridTile(
+                      child: Container(
+                    margin: const EdgeInsets.all(4.0),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.black),
+                    ),
+                    child: Center(
+                      child: Text(
+                        board[index],
+                        style: const TextStyle(fontSize: 45),
+                      ),
+                    ),
+                  )),
+                );
+              }),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void updateBoard(int index) {
+    int lastThirdMoveIndex = (moveCount ~/ 2) % 3;
+    if (board[index] == '') {
+      if (currentPlayer == 'X') {
+        if (moveCount >= 6) {
+          board[player1[lastThirdMoveIndex]] = '';
+        }
+        player1[lastThirdMoveIndex] = index;
+      } else if (currentPlayer == 'O') {
+        if (moveCount >= 6) {
+          board[player2[lastThirdMoveIndex]] = '';
+        }
+        player2[lastThirdMoveIndex] = index;
+      }
+      board[index] = currentPlayer;
+      moveCount++;
+    }
+  }
+
+  bool hasWon() {
+    for (int i = 0; i < 3; i++) {
+      if (board[i * 3] != '' &&
+          board[i * 3] == board[i * 3 + 1] &&
+          board[i * 3] == board[i * 3 + 2]) {
+        return true;
+      }
+    }
+
+    for (int i = 0; i < 3; i++) {
+      if (board[i] != '' &&
+          board[i] == board[i + 3] &&
+          board[i] == board[i + 6]) {
+        return true;
+      }
+    }
+
+    if (board[0] != '' && board[0] == board[4] && board[0] == board[8]) {
+      return true;
+    }
+    if (board[2] != '' && board[2] == board[4] && board[2] == board[6]) {
+      return true;
+    }
+    return false;
+  }
+
+  void boardToString(List<String> board) {
+    boardState =
+        "${board.map((cell) => cell.isEmpty ? "-" : cell).join('')} $moveCount $currentPlayer";
+  }
+
+  List<String> stringToBoard(String boardState) {
+    return boardState.substring(0, 9).split('');
   }
 }
