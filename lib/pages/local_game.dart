@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tic_tac_shift/common/constants.dart';
 
 class LocalGame extends StatefulWidget {
   const LocalGame({super.key});
@@ -26,35 +27,16 @@ class _LocalGameState extends State<LocalGame> {
       body: Column(
         children: [
           Text(boardState),
-          Expanded(
-            child: GridView.count(
-              crossAxisCount: 3,
-              children: List.generate(9, (index) {
-                return GestureDetector(
-                  onTap: () {
-                    if (!hasWon() && board[index] == '') {
-                      setState(() {
-                        _makeMove(index);
-                      });
-                    }
-                  },
-                  child: GridTile(
-                      child: Container(
-                    margin: const EdgeInsets.all(4.0),
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.black),
-                    ),
-                    child: Center(
-                      child: Text(
-                        board[index],
-                        style: const TextStyle(fontSize: 45),
-                      ),
-                    ),
-                  )),
-                );
-              }),
-            ),
-          ),
+          BoardWidget(
+              board: board,
+              currentPlayer: currentPlayer,
+              onTileTap: (index) {
+                if (!hasWon() && board[index] == '') {
+                  setState(() {
+                    _makeMove(index);
+                  });
+                }
+              })
         ],
       ),
     );
