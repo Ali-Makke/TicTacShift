@@ -1,15 +1,30 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:tic_tac_shift/common/loading.dart';
+import 'package:tic_tac_shift/services/database.dart';
+
+import '../common/constants.dart';
 
 class OnlineGame extends StatefulWidget {
-  const OnlineGame({super.key});
+  final String playerId;
+
+  const OnlineGame({super.key, required this.playerId});
 
   @override
   State<OnlineGame> createState() => _OnlineGameState();
 }
 
 class _OnlineGameState extends State<OnlineGame> {
-  var db = FirebaseFirestore.instance.collection('Games');
+  final DatabaseService _dbService = DatabaseService();
+  String? gameId;
+  bool playersReady = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _createOrJoinGame();
+  }
+
   List<String> board = List.filled(9, '');
   String currentPlayer = 'X';
   int moveCount = 0;
@@ -27,41 +42,29 @@ class _OnlineGameState extends State<OnlineGame> {
       ),
       body: Column(
         children: [
-          Text(boardState),
-          Expanded(
-            child: GridView.count(
-              crossAxisCount: 3,
-              children: List.generate(9, (index) {
-                return GestureDetector(
-                  onTap: () {
-                    if (!hasWon()) {
+          Text(widget.playerId),
+          playersReady
+              ? BoardWidget(
+                  board: board,
+                  currentPlayer: currentPlayer,
+                  onTileTap: (index) {
+                    if (!hasWon() && board[index] == '') {
                       setState(() {
-                        updateBoard(index);
-                        currentPlayer = (currentPlayer == 'X') ? 'O' : 'X';
-                        boardToString(board); //updates boardState notation
+                        _makeMove(index);
                       });
                     }
-                  },
-                  child: GridTile(
-                      child: Container(
-                    margin: const EdgeInsets.all(4.0),
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.black),
-                    ),
-                    child: Center(
-                      child: Text(
-                        board[index],
-                        style: const TextStyle(fontSize: 45),
-                      ),
-                    ),
-                  )),
-                );
-              }),
-            ),
-          ),
+                  })
+              : const Expanded(child: Loading()),
         ],
       ),
     );
+  }
+
+  void _makeMove(int index) async {
+    updateBoard(index);
+    boardToString(board);
+    await _dbService.updateBoardState(gameId!, boardState, currentPlayer);
+    board = stringToBoard(boardState);
   }
 
   void updateBoard(int index) {
@@ -80,7 +83,56 @@ class _OnlineGameState extends State<OnlineGame> {
       }
       board[index] = currentPlayer;
       moveCount++;
+      currentPlayer = (currentPlayer == 'X') ? 'O' : 'X';
     }
+  }
+
+  void boardToString(List<String> board) {
+    boardState =
+        "${board.map((cell) => cell.isEmpty ? "-" : cell).join('')} $moveCount $currentPlayer";
+  }
+
+  List<String> stringToBoard(String boardState) {
+    return boardState
+        .substring(0, 9)
+        .split('')
+        .map((cell) => cell == '-' ? '' : cell)
+        .toList();
+  }
+
+  void _createOrJoinGame() async {
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection('Games')
+        .where('status', isEqualTo: 'waiting')
+        .get();
+
+    if (querySnapshot.docs.isNotEmpty) {
+      DocumentSnapshot gameSnapshot = querySnapshot.docs.first;
+      gameId = gameSnapshot.id;
+      await _dbService.updateGameWithPlayer2(gameId!, widget.playerId);
+      _listenToGameUpdates();
+    } else {
+      DocumentReference gameRef = await _dbService.createGame(widget.playerId);
+      gameId = gameRef.id;
+      _listenToGameUpdates();
+    }
+  }
+
+  void _listenToGameUpdates() {
+    FirebaseFirestore.instance
+        .collection('Games')
+        .doc(gameId)
+        .snapshots()
+        .listen((snapshot) {
+      if (snapshot.exists) {
+        setState(() {
+          boardState = snapshot['boardState'];
+          currentPlayer = snapshot['currentTurn'];
+          playersReady = (snapshot['status'] == 'ready');
+          board = stringToBoard(boardState);
+        });
+      }
+    });
   }
 
   bool hasWon() {
@@ -107,14 +159,5 @@ class _OnlineGameState extends State<OnlineGame> {
       return true;
     }
     return false;
-  }
-
-  void boardToString(List<String> board) {
-    boardState =
-        "${board.map((cell) => cell.isEmpty ? "-" : cell).join('')} $moveCount $currentPlayer";
-  }
-
-  List<String> stringToBoard(String boardState) {
-    return boardState.substring(0, 9).split('');
   }
 }

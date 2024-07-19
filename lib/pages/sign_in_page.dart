@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tic_tac_shift/common/loading.dart';
 import 'package:tic_tac_shift/services/auth_service.dart';
+
 import '../common/constants.dart';
 
 class SignInPage extends StatefulWidget {
@@ -24,7 +25,7 @@ class _SignInPageState extends State<SignInPage> {
   @override
   Widget build(BuildContext context) {
     return loading
-        ? Loading()
+        ? const Loading()
         : Scaffold(
             backgroundColor: Colors.amber[50],
             appBar: AppBar(
@@ -36,8 +37,8 @@ class _SignInPageState extends State<SignInPage> {
                   onPressed: () {
                     widget.toggleView();
                   },
-                  label: Text("Register"),
-                  icon: Icon(Icons.person),
+                  label: const Text("Register"),
+                  icon: const Icon(Icons.person),
                 )
               ],
             ),
@@ -49,7 +50,7 @@ class _SignInPageState extends State<SignInPage> {
                   key: _formKey,
                   child: Column(
                     children: [
-                      SizedBox(height: 20),
+                      const SizedBox(height: 20),
                       //email field
                       TextFormField(
                         decoration:
@@ -60,7 +61,7 @@ class _SignInPageState extends State<SignInPage> {
                           _email = text;
                         },
                       ),
-                      SizedBox(height: 20),
+                      const SizedBox(height: 20),
                       //password field
                       TextFormField(
                         decoration:
@@ -73,13 +74,14 @@ class _SignInPageState extends State<SignInPage> {
                           _password = text;
                         },
                       ),
-                      SizedBox(height: 20),
+                      const SizedBox(height: 20),
                       ElevatedButton(
-                        child: Text("Sign In"),
+                        child: const Text("Sign In"),
                         onPressed: () async {
                           if (_formKey.currentState!.validate()) {
                             setState(() => loading = true);
-                            await Future.delayed(Duration(seconds: 2));
+                            await Future.delayed(
+                                const Duration(milliseconds: 1100));
                             dynamic userInfo = await _auth.signInEmailnPassword(
                                 _email, _password);
                             if (userInfo == null) {
@@ -93,7 +95,7 @@ class _SignInPageState extends State<SignInPage> {
                       ),
                       Text(
                         error,
-                        style: TextStyle(color: Colors.red, fontSize: 14),
+                        style: const TextStyle(color: Colors.red, fontSize: 14),
                       ),
                     ],
                   ),

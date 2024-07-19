@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class DatabaseService {
@@ -33,11 +35,11 @@ class DatabaseService {
     });
   }
 
-  Future createGame(String player1Id, String player2Id) async {
-    await gamesCollection.add({
+  Future<DocumentReference> createGame(String player1Id) async {
+    return await gamesCollection.add({
       'player1Id': player1Id,
-      'player2Id': player2Id,
-      'currentTurn': player1Id,
+      'player2Id': null,
+      'currentTurn': "X",
       'boardState': '---------',
       'player1TimeRemaining': 300,
       'player2TimeRemaining': 300,
@@ -46,8 +48,19 @@ class DatabaseService {
     });
   }
 
-  Future updateGameState(String gameId, Map<String, dynamic> updates) async {
-    await gamesCollection.doc(gameId).update(updates);
+  Future updateBoardState(
+      String gameId, String boardState, String currentTurn) async {
+    await gamesCollection.doc(gameId).update({
+      'boardState': boardState,
+      'currentTurn': currentTurn,
+    });
+  }
+
+  Future updateGameWithPlayer2(String gameId, String player2Id) async {
+    await gamesCollection.doc(gameId).update({
+      'player2Id': player2Id,
+      'status': 'ready',
+    });
   }
 
   Future createChallenge(String challengerId, String challengedId) async {
@@ -73,9 +86,4 @@ class DatabaseService {
       'winRate': wins / (wins + losses)
     });
   }
-
-  Stream<QuerySnapshot> get userData {
-    return gamesCollection.snapshots();
-  }
-
 }

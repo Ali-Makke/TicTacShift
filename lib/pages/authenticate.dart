@@ -13,8 +13,9 @@ class _AuthenticateState extends State<Authenticate> {
   bool showSignInPage = true;
 
   void toggleView() {
-    showSignInPage = !showSignInPage;
-    setState(() {});
+    setState(() {
+      showSignInPage = !showSignInPage;
+    });
   }
 
   @override

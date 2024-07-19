@@ -32,12 +32,9 @@ class _LocalGameState extends State<LocalGame> {
               children: List.generate(9, (index) {
                 return GestureDetector(
                   onTap: () {
-                    if (!hasWon()) {
+                    if (!hasWon() && board[index] == '') {
                       setState(() {
-                        // board = stringToBoard(boardState);
-                        updateBoard(index);
-                        currentPlayer = (currentPlayer == 'X') ? 'O' : 'X';
-                        boardToString(board); //updates boardState notation
+                        _makeMove(index);
                       });
                     }
                   },
@@ -63,6 +60,12 @@ class _LocalGameState extends State<LocalGame> {
     );
   }
 
+  void _makeMove(int index) {
+    updateBoard(index);
+    boardToString(board);
+    board = stringToBoard(boardState);
+  }
+
   void updateBoard(int index) {
     int lastThirdMoveIndex = (moveCount ~/ 2) % 3;
     if (board[index] == '') {
@@ -79,6 +82,7 @@ class _LocalGameState extends State<LocalGame> {
       }
       board[index] = currentPlayer;
       moveCount++;
+      currentPlayer = (currentPlayer == 'X') ? 'O' : 'X';
     }
   }
 
@@ -109,11 +113,15 @@ class _LocalGameState extends State<LocalGame> {
   }
 
   void boardToString(List<String> board) {
-      boardState =
-          "${board.map((cell) => cell.isEmpty ? "-" : cell).join('')} $moveCount $currentPlayer";
+    boardState =
+        "${board.map((cell) => cell.isEmpty ? "-" : cell).join('')} $moveCount $currentPlayer";
   }
 
   List<String> stringToBoard(String boardState) {
-    return boardState.substring(0, 9).split('');
+    return boardState
+        .substring(0, 9)
+        .split('')
+        .map((cell) => cell == '-' ? '' : cell)
+        .toList();
   }
 }
