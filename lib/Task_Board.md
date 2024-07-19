@@ -1,3 +1,9 @@
+# TO DO Reminders before submission
+
+*** add back main file without api key
+*** separately send back configuration file
+*** separately send back api key(s)
+
 # {*(important) -(less important)}
 # To DO:
     -Check all firebase connections
@@ -10,10 +16,8 @@
     -check label in the settings button in the home_page 
     -add sound effects(in game)
     -user can add avatar
-    *implement local match 
-    *implement online match
-    *work on REST sercive api to MySQL database
-    -
+    *design REST sercive api to MySQL database
+    *implement REST sercive api to MySQL database into app
     -
     -
 
@@ -22,6 +26,7 @@
         -what are the edge cases(eg: what happens if the player disconnects mid_game)
     *Design and create app/game database
     *implement game logic
+        *implement online match
     *plan game code structure and logic
     -
 
@@ -34,12 +39,12 @@
 
 # Done:
     -Make basic project file structure
-    -Configure and connect to FireBase
-    -Implement firebase auth service
-    -Implement firebase signin and register forms
+    *Configure and connect to FireBase
+    *Implement firebase auth service
+    *Implement firebase signin and register forms
     -Add flutter_spinkit loading animation
-    -Connect and use the realtime cloud firestore database
-    -
+    *Connect and use the realtime cloud firestore database
+    *implement local match
     -
 
 # Database initial planning:
