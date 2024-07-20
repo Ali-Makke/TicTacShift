@@ -23,18 +23,17 @@
     -make last third move a different color or make hover effect
     *design REST sercive api to MySQL database
     *implement REST sercive api to MySQL database into app
-    *make player username unique
-    *add page to search for players and add friends
     -implement ai match
-    *add player game history
     -
 
 # In Progress:
 
     -what are the edge cases(eg: what happens if the player disconnects mid_game)
     *Design and create app/game database
+    *add page to search for players and add friends
     *implement game logic
         *implement invite friend match
+    *add player game history
     -
 
 # Review/Test:
@@ -56,6 +55,10 @@
     *plan game code structure and logic
     -Briefly understand how firebase datebase works(It uses a NoSQL database)
     -decide what lets the player climb the leaderboard(find it at the end of this file)
+    *make usernames unique
+    -fix form validation
+    -
+    -
     -
 
 Database initial planning:

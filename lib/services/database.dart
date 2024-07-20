@@ -3,7 +3,6 @@ import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-
 class DatabaseService {
   final String? uid;
 
@@ -21,6 +20,15 @@ class DatabaseService {
 
   final CollectionReference leaderBoardCollection =
       FirebaseFirestore.instance.collection("LeaderBoard");
+
+  Future<bool> isUsernameTaken(username) async {
+    QuerySnapshot result =
+        await usersCollection.where('username', isEqualTo: "$username").get();
+    if (result.docs.isNotEmpty) {
+      return true;
+    }
+    return false;
+  }
 
   Future updateUserData(String username, String email) async {
     return await usersCollection.doc(uid).set({

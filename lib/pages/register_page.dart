@@ -55,10 +55,11 @@ class _RegisterPageState extends State<RegisterPage> {
                       TextFormField(
                         decoration:
                             textInputDecoration.copyWith(hintText: "Username"),
-                        validator: (value) =>
-                            value!.isEmpty ? "Username already taken" : null,
+                        validator: (value) => value!.trim().isEmpty
+                            ? "Field can't be empty"
+                            : null,
                         onChanged: (text) {
-                          _username = text;
+                          _username = text.trim().toLowerCase();
                         },
                       ),
                       SizedBox(height: 20),
@@ -67,9 +68,9 @@ class _RegisterPageState extends State<RegisterPage> {
                         decoration:
                             textInputDecoration.copyWith(hintText: "Email"),
                         validator: (value) =>
-                            value!.isEmpty ? "Enter an email" : null,
+                            value!.trim().isEmpty ? "Enter an email" : null,
                         onChanged: (text) {
-                          _email = text;
+                          _email = text.trim().toLowerCase();
                         },
                       ),
                       const SizedBox(height: 20),
@@ -77,12 +78,12 @@ class _RegisterPageState extends State<RegisterPage> {
                       TextFormField(
                         decoration:
                             textInputDecoration.copyWith(hintText: "Password"),
-                        validator: (value) => (value!.length < 6)
+                        validator: (value) => (value!.trim().length < 6)
                             ? "Password must be more than 6 chars long"
                             : null,
                         obscureText: true,
                         onChanged: (text) {
-                          _password = text;
+                          _password = text.trim();
                         },
                       ),
                       const SizedBox(height: 20),
@@ -93,11 +94,15 @@ class _RegisterPageState extends State<RegisterPage> {
                             setState(() => loading = true);
                             dynamic userInfo = await _auth
                                 .registerEmailnPassword(_username, _email, _password);
-                            if (userInfo == null) {
+                            if (userInfo is String) {
                               setState(() {
                                 loading = false;
-                                error = ('Please supply a valid email');
+                                error = (userInfo);
                               });
+                            } else if (userInfo == null) {
+                              loading = false;
+                              error =
+                                  ("An unknown error occurred. Please try again.");
                             }
                           }
                         },

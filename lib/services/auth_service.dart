@@ -1,6 +1,8 @@
 import 'dart:async';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:tic_tac_shift/models/user_model.dart';
+
 import 'database.dart';
 
 /*
@@ -25,7 +27,12 @@ class AuthService {
   //create a UserModel object based on User <-(User the Firebase type)
   //convert firebase User object to my UserModel object
   UserModel? _userFromFirebaseToUserModel(User? firebaseUser) {
-    return (firebaseUser != null) ? UserModel(uid: firebaseUser.uid) : null;
+    return (firebaseUser != null)
+        ? UserModel(
+            uid: firebaseUser.uid,
+            email: firebaseUser.email,
+            username: firebaseUser.displayName)
+        : null;
   }
 
   /*
@@ -62,18 +69,27 @@ class AuthService {
   Future? registerEmailnPassword(
       String username, String email, String password) async {
     try {
+      bool isUsernameTaken = await DatabaseService().isUsernameTaken(username);
+      if (isUsernameTaken) {
+        return 'Username already taken';
+      }
       //creating new user with email and password
       UserCredential userInfo = await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
-      //getting the user
+      //setting user username
       User? firebaseUser = userInfo.user;
+      await firebaseUser!.updateProfile(displayName: username);
+      await firebaseUser.reload();
+      firebaseUser = _auth.currentUser;
+
       //adding user to database
       await DatabaseService(uid: firebaseUser!.uid)
           .updateUserData(username, email);
+
       return _userFromFirebaseToUserModel(firebaseUser);
     } catch (e) {
       print(e.toString());
-      return null;
+      return "Invalid email address or Already taken";
     }
   }
 

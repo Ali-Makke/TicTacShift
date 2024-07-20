@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../models/user_model.dart';
 
 class AccountPage extends StatefulWidget {
   const AccountPage({super.key});
@@ -10,6 +13,7 @@ class AccountPage extends StatefulWidget {
 class _AccountPageState extends State<AccountPage> {
   @override
   Widget build(BuildContext context) {
+    final userInfo = Provider.of<UserModel>(context);
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -20,13 +24,13 @@ class _AccountPageState extends State<AccountPage> {
         padding: const EdgeInsets.all(16.0),
         child: ListView(
           children: [
-            const Row(
+            Row(
               children: [
-                Icon(Icons.person, color: Colors.blueAccent),
-                SizedBox(width: 8.0),
+                const Icon(Icons.person, color: Colors.blueAccent),
+                const SizedBox(width: 8.0),
                 Text(
-                  "Username: Odigras",
-                  style: TextStyle(
+                  "Username: ${userInfo.username}",
+                  style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w500,
                       color: Colors.black),
@@ -34,13 +38,27 @@ class _AccountPageState extends State<AccountPage> {
               ],
             ),
             const SizedBox(height: 12.0),
-            const Row(
+            Row(
               children: [
-                Icon(Icons.email, color: Colors.blueAccent),
-                SizedBox(width: 8.0),
+                const Icon(Icons.email, color: Colors.blueAccent),
+                const SizedBox(width: 8.0),
                 Text(
-                  "Email: test@gmail.com",
-                  style: TextStyle(
+                  "Email: ${userInfo.email}",
+                  style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12.0),
+            Row(
+              children: [
+                const Icon(Icons.email, color: Colors.blueAccent),
+                const SizedBox(width: 8.0),
+                Text(
+                  "Id: ${userInfo.uid}",
+                  style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w500,
                       color: Colors.black),

@@ -56,9 +56,9 @@ class _SignInPageState extends State<SignInPage> {
                         decoration:
                             textInputDecoration.copyWith(hintText: "Email"),
                         validator: (value) =>
-                            value!.isEmpty ? "Enter an email" : null,
+                            value!.trim().isEmpty ? "Enter an email" : null,
                         onChanged: (text) {
-                          _email = text;
+                          _email = text.trim().toLowerCase();
                         },
                       ),
                       const SizedBox(height: 20),
@@ -66,12 +66,12 @@ class _SignInPageState extends State<SignInPage> {
                       TextFormField(
                         decoration:
                             textInputDecoration.copyWith(hintText: "Password"),
-                        validator: (value) => (value!.length < 6)
+                        validator: (value) => (value!.trim().length < 6)
                             ? "Password must be more than 6 chars long"
                             : null,
                         obscureText: true,
                         onChanged: (text) {
-                          _password = text;
+                          _password = text.trim();
                         },
                       ),
                       const SizedBox(height: 20),
