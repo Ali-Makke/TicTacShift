@@ -69,8 +69,10 @@ class HomePage extends StatelessWidget {
           ElevatedButton(
               onPressed: () {}, child: const Text("Play against AI")),
           const SizedBox(height: 60),
-          ElevatedButton(
-              onPressed: () {}, child: const Text("Play against friend")),
+          ElevatedButton(onPressed: () {}, child: const Text("Invite Friend")),
+          const SizedBox(height: 60),
+          //change this to listview with the last 10 games
+          ElevatedButton(onPressed: () {}, child: const Text("Game History")),
         ],
       )),
     );

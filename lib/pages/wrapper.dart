@@ -10,7 +10,6 @@ class Wrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final userInfo = Provider.of<UserModel?>(context);
-    print("wrapper userInfo $userInfo");
 
     return (userInfo == null) ? const Authenticate() : const HomePage();
   }
