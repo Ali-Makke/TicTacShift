@@ -17,6 +17,11 @@ class OnlineGame extends StatefulWidget {
 class _OnlineGameState extends State<OnlineGame> {
   final DatabaseService _dbService = DatabaseService();
   String? gameId;
+  String? player1Id;
+  String? player2Id;
+  String? player1Letter;
+  String? player2Letter;
+  String? lastMovedPlayer;
   bool playersReady = false;
 
   @override
@@ -26,7 +31,7 @@ class _OnlineGameState extends State<OnlineGame> {
   }
 
   List<String> board = List.filled(9, '');
-  String currentPlayer = 'X';
+  String currentTurn = 'X';
   int moveCount = 0;
   List<int> player1 = [0, 0, 0];
   List<int> player2 = [0, 0, 0];
@@ -46,12 +51,21 @@ class _OnlineGameState extends State<OnlineGame> {
           playersReady
               ? BoardWidget(
                   board: board,
-                  currentPlayer: currentPlayer,
+                  currentPlayer: currentTurn,
                   onTileTap: (index) {
-                    if (!hasWon() && board[index] == '') {
-                      setState(() {
-                        _makeMove(index);
-                      });
+                    if (moveCount % 2 == 0 && player1Id == widget.playerId) {
+                      if (!hasWon() && board[index] == '') {
+                        setState(() {
+                          _makeMove(index);
+                        });
+                      }
+                    } else if (moveCount % 2 == 1 &&
+                        player2Id == widget.playerId) {
+                      if (!hasWon() && board[index] == '') {
+                        setState(() {
+                          _makeMove(index);
+                        });
+                      }
                     }
                   })
               : const Expanded(child: Loading()),
@@ -63,33 +77,33 @@ class _OnlineGameState extends State<OnlineGame> {
   void _makeMove(int index) async {
     updateBoard(index);
     boardToString(board);
-    await _dbService.updateBoardState(gameId!, boardState, currentPlayer);
+    await _dbService.updateBoardState(
+        gameId!, boardState, currentTurn, moveCount);
     board = stringToBoard(boardState);
   }
 
   void updateBoard(int index) {
     int lastThirdMoveIndex = (moveCount ~/ 2) % 3;
     if (board[index] == '') {
-      if (currentPlayer == 'X') {
+      if (currentTurn == 'X') {
         if (moveCount >= 6) {
           board[player1[lastThirdMoveIndex]] = '';
         }
         player1[lastThirdMoveIndex] = index;
-      } else if (currentPlayer == 'O') {
+      } else if (currentTurn == 'O') {
         if (moveCount >= 6) {
           board[player2[lastThirdMoveIndex]] = '';
         }
         player2[lastThirdMoveIndex] = index;
       }
-      board[index] = currentPlayer;
-      moveCount++;
-      currentPlayer = (currentPlayer == 'X') ? 'O' : 'X';
+      board[index] = currentTurn;
+      currentTurn = (currentTurn == 'X') ? 'O' : 'X';
     }
   }
 
   void boardToString(List<String> board) {
     boardState =
-        "${board.map((cell) => cell.isEmpty ? "-" : cell).join('')} $moveCount $currentPlayer";
+        "${board.map((cell) => cell.isEmpty ? "-" : cell).join('')} $moveCount $currentTurn";
   }
 
   List<String> stringToBoard(String boardState) {
@@ -107,12 +121,14 @@ class _OnlineGameState extends State<OnlineGame> {
         .get();
 
     if (querySnapshot.docs.isNotEmpty) {
+      player2Id = widget.playerId;
       DocumentSnapshot gameSnapshot = querySnapshot.docs.first;
       gameId = gameSnapshot.id;
-      await _dbService.updateGameWithPlayer2(gameId!, widget.playerId);
+      await _dbService.updateGameWithPlayer2(gameId!, player2Id!);
       _listenToGameUpdates();
     } else {
-      DocumentReference gameRef = await _dbService.createGame(widget.playerId);
+      player1Id = widget.playerId;
+      DocumentReference gameRef = await _dbService.createGame(player1Id!);
       gameId = gameRef.id;
       _listenToGameUpdates();
     }
@@ -127,9 +143,16 @@ class _OnlineGameState extends State<OnlineGame> {
       if (snapshot.exists) {
         setState(() {
           boardState = snapshot['boardState'];
-          currentPlayer = snapshot['currentTurn'];
-          playersReady = (snapshot['status'] == 'ready');
+          currentTurn = snapshot['currentTurn'];
           board = stringToBoard(boardState);
+          moveCount = snapshot['moveCount'];
+          player1Letter = snapshot['player1Letter'];
+          player2Letter = snapshot['player2Letter'];
+          player1Id = snapshot['player1Id'];
+          player2Id = snapshot['player2Id'];
+          if (!playersReady) {
+            playersReady = (snapshot['status'] == 'ready');
+          }
         });
       }
     });

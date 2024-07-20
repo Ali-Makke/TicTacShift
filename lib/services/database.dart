@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -36,11 +37,15 @@ class DatabaseService {
   }
 
   Future<DocumentReference> createGame(String player1Id) async {
+    String letter = (Random().nextBool()) ? "X" : "O";
     return await gamesCollection.add({
       'player1Id': player1Id,
       'player2Id': null,
+      'player1Letter': letter,
+      'player2Letter': (letter == "X") ? "O" : "X",
       'currentTurn': "X",
-      'boardState': '---------',
+      'moveCount': 0,
+      'boardState': '--------- 0 X',
       'player1TimeRemaining': 300,
       'player2TimeRemaining': 300,
       'status': 'waiting',
@@ -48,11 +53,12 @@ class DatabaseService {
     });
   }
 
-  Future updateBoardState(
-      String gameId, String boardState, String currentTurn) async {
+  Future updateBoardState(String gameId, String boardState, String currentTurn,
+      int moveCount) async {
     await gamesCollection.doc(gameId).update({
       'boardState': boardState,
       'currentTurn': currentTurn,
+      'moveCount': (moveCount + 1)
     });
   }
 
