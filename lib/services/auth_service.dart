@@ -76,14 +76,12 @@ class AuthService {
       //creating new user with email and password
       UserCredential userInfo = await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
-      //setting user username
+
       User? firebaseUser = userInfo.user;
       await firebaseUser!.updateProfile(displayName: username);
       await firebaseUser.reload();
-      firebaseUser = _auth.currentUser;
-
       //adding user to database
-      await DatabaseService(uid: firebaseUser!.uid)
+      await DatabaseService(uid: firebaseUser.uid)
           .updateUserData(username, email);
 
       return _userFromFirebaseToUserModel(firebaseUser);

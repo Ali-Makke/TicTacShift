@@ -13,7 +13,9 @@ class AccountPage extends StatefulWidget {
 class _AccountPageState extends State<AccountPage> {
   @override
   Widget build(BuildContext context) {
-    final userInfo = Provider.of<UserModel>(context);
+    final userInfo = Provider.of<UserModel?>(context);
+    String? username = userInfo!.email!.split("@")[0]; //temporary username
+    setState(() {});
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -29,7 +31,7 @@ class _AccountPageState extends State<AccountPage> {
                 const Icon(Icons.person, color: Colors.blueAccent),
                 const SizedBox(width: 8.0),
                 Text(
-                  "Username: ${userInfo.username}",
+                  "Username: ${userInfo.username ?? username}",
                   style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w500,

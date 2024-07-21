@@ -30,6 +30,23 @@ class DatabaseService {
     return false;
   }
 
+  Future searchForUser(String username) async {
+    List<String> usernames = [];
+    try {
+      QuerySnapshot result = await usersCollection
+          .limit(10)
+          .orderBy('username')
+          .startAt([username]).endAt(['$username\uf8ff']).get();
+      for (var docSnapshot in result.docs) {
+        var data = docSnapshot.data() as Map<String, dynamic>;
+        usernames.add(data['username']);
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+    return usernames;
+  }
+
   Future updateUserData(String username, String email) async {
     return await usersCollection.doc(uid).set({
       'username': username,

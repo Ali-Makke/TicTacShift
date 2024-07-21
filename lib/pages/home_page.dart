@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tic_tac_shift/models/user_model.dart';
+import 'package:tic_tac_shift/pages/friend_invite.dart';
 import 'package:tic_tac_shift/pages/local_game.dart';
 import 'package:tic_tac_shift/pages/online_game.dart';
 import 'package:tic_tac_shift/pages/settings_page.dart';
@@ -69,7 +70,13 @@ class HomePage extends StatelessWidget {
           ElevatedButton(
               onPressed: () {}, child: const Text("Play against AI")),
           const SizedBox(height: 60),
-          ElevatedButton(onPressed: () {}, child: const Text("Invite Friend")),
+          ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => FriendInvite(),
+                ));
+              },
+              child: const Text("Invite Friend")),
           const SizedBox(height: 60),
           //change this to listview with the last 10 games
           ElevatedButton(onPressed: () {}, child: const Text("Game History")),

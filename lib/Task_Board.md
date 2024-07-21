@@ -32,6 +32,7 @@
     *Design and create app/game database
     *add page to search for players and add friends
     *implement game logic
+        *implement search for player
         *implement invite friend match
     *add player game history
     -
