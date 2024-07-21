@@ -31,7 +31,7 @@ migrate_working_dir/
 .pub/
 /build/
 /android/app/google-services.json
-/lib/main.dart
+/lib/default_options.dart
 
 # Symbolication related
 app.*.symbols
