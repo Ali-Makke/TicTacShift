@@ -58,7 +58,7 @@ class _OnlineGameState extends State<OnlineGame> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text("Local Match"),
+          title: const Text("Online Match"),
           centerTitle: true,
           backgroundColor: Colors.pink[400],
           automaticallyImplyLeading: false,
