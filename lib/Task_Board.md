@@ -28,16 +28,18 @@
 
 # In Progress:
 
+    ***
+    ---------- FIX MAJOR BUG IN USERMODEL CONSTRUCTION ------------
+    ***
+    *implement game history
+    *create relational database tables
     -what are the edge cases(eg: what happens if the player disconnects mid_game)
-    *Design and create app/game database
-    *add page to search for players and add friends
     *implement game logic
-        *implement search for player
         *implement invite friend match
-    *add player game history
     -
 
 # Review/Test:
+
     -Test loading screens
     -Trace null values throughout the app lifetime
     -Encapsulate variables
@@ -45,6 +47,9 @@
     -
 
 # Done:
+    *add page to search for players and add friends
+    *implement search for player
+    *Design and create app/game database
     -Make basic project file structure
     *Configure and connect to FireBase
     *Implement firebase auth service
