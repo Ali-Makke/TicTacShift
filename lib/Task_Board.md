@@ -36,6 +36,7 @@
     -what are the edge cases(eg: what happens if the player disconnects mid_game)
     *implement game logic
         *implement invite friend match
+    *add what happens if the time runs out
     -
 
 # Review/Test:

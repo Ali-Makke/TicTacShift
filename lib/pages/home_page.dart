@@ -50,38 +50,40 @@ class HomePage extends StatelessWidget {
           )
         ],
       ),
-      body: Center(
-          child: Column(
-        children: [
-          ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => OnlineGame(playerId: userInfo.uid!)));
-              },
-              child: const Text("Start Online Match")),
-          const SizedBox(height: 60),
-          ElevatedButton(
-              onPressed: () {
-                Navigator.of(context)
-                    .push(MaterialPageRoute(builder: (context) => LocalGame()));
-              },
-              child: const Text("Local play")),
-          const SizedBox(height: 60),
-          ElevatedButton(
-              onPressed: () {}, child: const Text("Play against AI")),
-          const SizedBox(height: 60),
-          ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => FriendInvite(),
-                ));
-              },
-              child: const Text("Invite Friend")),
-          const SizedBox(height: 60),
-          //change this to listview with the last 10 games
-          ElevatedButton(onPressed: () {}, child: const Text("Game History")),
-        ],
-      )),
+      body: SingleChildScrollView(
+        child: Center(
+            child: Column(
+          children: [
+            ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => OnlineGame(playerId: userInfo)));
+                },
+                child: const Text("Start Online Match")),
+            const SizedBox(height: 60),
+            ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) => LocalGame()));
+                },
+                child: const Text("Local play")),
+            const SizedBox(height: 60),
+            ElevatedButton(
+                onPressed: () {}, child: const Text("Play against AI")),
+            const SizedBox(height: 60),
+            ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => FriendInvite(),
+                  ));
+                },
+                child: const Text("Invite Friend")),
+            const SizedBox(height: 60),
+            //change this to listview with the last 10 games
+            ElevatedButton(onPressed: () {}, child: const Text("Game History")),
+          ],
+        )),
+      ),
     );
   }
 }

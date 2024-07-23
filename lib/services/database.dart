@@ -1,14 +1,16 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:http/http.dart' as http;
 
 class DatabaseService {
   final String? uid;
 
   DatabaseService({this.uid});
 
-  //collection reference
+  //collection references
   final CollectionReference usersCollection =
       FirebaseFirestore.instance.collection("Users");
 
@@ -48,43 +50,47 @@ class DatabaseService {
   }
 
   Future updateUserData(String username, String email) async {
+    addUser(uid!, username, email); //add user to sql database
     return await usersCollection.doc(uid).set({
       'username': username,
       'email': email,
       'uid': uid,
-      'games_won': 0,
-      'games_played': 0,
-      'win_streak': 0,
-      'games_lost': 0,
-      'total_time_played': 0,
       'created_at': FieldValue.serverTimestamp(),
-      'played_for': FieldValue.serverTimestamp()
     });
   }
 
   Future<DocumentReference> createGame(String player1Id) async {
     String letter = (Random().nextBool()) ? "X" : "O";
     return await gamesCollection.add({
+      'moveCount': 0,
+      'currentTurn': "X",
       'player1Id': player1Id,
       'player2Id': null,
+      'status': 'waiting',
+      'boardState': '--------- 0 X',
       'player1Letter': letter,
       'player2Letter': (letter == "X") ? "O" : "X",
-      'currentTurn': "X",
-      'moveCount': 0,
-      'boardState': '--------- 0 X',
       'player1TimeRemaining': 300,
       'player2TimeRemaining': 300,
-      'status': 'waiting',
       'game_created_at': FieldValue.serverTimestamp()
     });
   }
 
-  Future updateBoardState(String gameId, String boardState, String currentTurn,
-      int moveCount) async {
+  Future updateBoardState(
+      String gameId,
+      String boardState,
+      String currentTurn,
+      int moveCount,
+      int player1TimeRemaining,
+      int player2TimeRemaining,
+      bool hasQuitMatch) async {
     await gamesCollection.doc(gameId).update({
       'boardState': boardState,
       'currentTurn': currentTurn,
-      'moveCount': (moveCount + 1)
+      'moveCount': (moveCount + 1),
+      'player1TimeRemaining': player1TimeRemaining,
+      'player2TimeRemaining': player2TimeRemaining,
+      if (hasQuitMatch) 'status': 'quit',
     });
   }
 
@@ -117,5 +123,34 @@ class DatabaseService {
       'losses': losses,
       'winRate': wins / (wins + losses)
     });
+  }
+
+  /*
+  *
+  * All the functions above use firebase services to connect to noSQL real-time database
+  * All the functions below use restful services to connect to SQL database
+  *
+  */
+  Future<void> addUser(String uid, String username, String email) async {
+    try {
+      final response = await http.post(
+        Uri.parse('http://tictacshift.scienceontheweb.net/addUser.php'),
+        body: {
+          'uid': uid,
+          'username': username,
+          'email': email,
+        },
+      );
+
+      if (response.statusCode == 200) {
+        var data = json.decode(response.body);
+        print(data);
+      } else {
+        print('Failed to add user');
+        print(response.statusCode);
+      }
+    } catch (e) {
+      print('Error occurred: $e');
+    }
   }
 }
