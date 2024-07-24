@@ -68,14 +68,18 @@ class PlayerInfo extends StatelessWidget {
 
 class BoardWidget extends StatelessWidget {
   final List<String> board;
-  final String currentPlayer;
   final Function(int) onTileTap;
+  final int lastThirdMoveX;
+  final int lastThirdMoveO;
+  final int moveCount; // Add moveCount as an input
 
   const BoardWidget({
     super.key,
     required this.board,
-    required this.currentPlayer,
     required this.onTileTap,
+    required this.lastThirdMoveX,
+    required this.lastThirdMoveO,
+    required this.moveCount,
   });
 
   @override
@@ -86,6 +90,14 @@ class BoardWidget extends StatelessWidget {
       child: GridView.count(
         crossAxisCount: 3,
         children: List.generate(9, (index) {
+          Color tileColor = Colors.white;
+          if (moveCount >= 6) {
+            if (index == lastThirdMoveX) {
+              tileColor = Colors.redAccent;
+            } else if (index == lastThirdMoveO) {
+              tileColor = Colors.blueAccent;
+            }
+          }
           return GestureDetector(
             onTap: () {
               onTileTap(index);
@@ -95,6 +107,7 @@ class BoardWidget extends StatelessWidget {
                 margin: const EdgeInsets.all(4.0),
                 decoration: BoxDecoration(
                   border: Border.all(color: Colors.black),
+                  color: tileColor,
                 ),
                 child: Center(
                   child: Text(

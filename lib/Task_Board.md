@@ -7,36 +7,19 @@
 # {*(important) -(less important)}
 # To DO:
 
-    *In the onlineGame file:
-        *dispose listner when player exits the game or when player hasWon
-        *add timers
-        *change the board state to be an array with all match state(to use for player game play history)
-    *Learn 'dispose' and use it if applicable
-    -Check all firebase connections
-    -checkout more firebase features and also learn to use 'firebase auth exeptions'
-    -check overall project structure
-    -check hosting details
     -don't let user send more then 5 challenge links within an hour unless the link was opened
     -check label in the settings button in the home_page 
     -add sound effects(in game)
     -user can add avatar
-    -make last third move a different color or make hover effect
-    *design REST sercive api to MySQL database
-    *implement REST sercive api to MySQL database into app
     -implement ai match
     -
 
 # In Progress:
 
-    ***
-    ---------- FIX MAJOR BUG IN USERMODEL CONSTRUCTION ------------
-    ***
-    *implement game history
-    *create relational database tables
     -what are the edge cases(eg: what happens if the player disconnects mid_game)
     *implement game logic
         *implement invite friend match
-    *add what happens if the time runs out
+    ***fix board state bug not updating correctly
     -
 
 # Review/Test:
@@ -48,6 +31,7 @@
     -
 
 # Done:
+
     *add page to search for players and add friends
     *implement search for player
     *Design and create app/game database
@@ -64,8 +48,28 @@
     -decide what lets the player climb the leaderboard(find it at the end of this file)
     *make usernames unique
     -fix form validation
-    -
-    -
+    ***
+    ---------- FIX MAJOR BUG IN USERMODEL CONSTRUCTION ------------
+    ***
+    *add what happens if the time runs out
+    *Fix infinit time glitch when quick move is made
+    -make last third move a different color or make hover effect
+    *design REST sercive api to MySQL database
+    *implement REST sercive api to MySQL database into app
+    *In the onlineGame file:
+        *dispose listner when player exits the game or when player hasWon
+        *add timers
+        *change the board state to be an array with all match state(to use for player game play history)
+    *Learn 'dispose' and use it if applicable
+    -Check all firebase connections
+    -checkout more firebase features and also learn to use 'firebase auth exeptions'
+    -check overall project structure
+    -check hosting details
+    *implement game history
+    *create relational database tables
+    *implement stats and update after each game
+    *fix color bug(update lastThird move indices for each player)
+    *fix time stoped working
     -
 
 Database initial planning:

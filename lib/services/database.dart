@@ -66,12 +66,15 @@ class DatabaseService {
       'currentTurn': "X",
       'player1Id': player1Id,
       'player2Id': null,
+      'boardStates': ['--------- 0 X'],
       'status': 'waiting',
       'boardState': '--------- 0 X',
       'player1Letter': letter,
       'player2Letter': (letter == "X") ? "O" : "X",
-      'player1TimeRemaining': 300,
-      'player2TimeRemaining': 300,
+      'player1': [0, 0, 0],
+      'player2': [0, 0, 0],
+      'player1TimeRemaining': 200,
+      'player2TimeRemaining': 200,
       'game_created_at': FieldValue.serverTimestamp()
     });
   }
@@ -79,17 +82,23 @@ class DatabaseService {
   Future updateBoardState(
       String gameId,
       String boardState,
+      boardStates,
       String currentTurn,
       int moveCount,
       int player1TimeRemaining,
       int player2TimeRemaining,
-      bool hasQuitMatch) async {
+      bool hasQuitMatch,
+      List<int> player1,
+      List<int> player2) async {
     await gamesCollection.doc(gameId).update({
       'boardState': boardState,
+      'boardStates': boardStates,
       'currentTurn': currentTurn,
       'moveCount': (moveCount + 1),
       'player1TimeRemaining': player1TimeRemaining,
       'player2TimeRemaining': player2TimeRemaining,
+      'player1': player1,
+      'player2': player2,
       if (hasQuitMatch) 'status': 'quit',
     });
   }
@@ -143,14 +152,105 @@ class DatabaseService {
       );
 
       if (response.statusCode == 200) {
-        var data = json.decode(response.body);
-        print(data);
+        print("User added successfully");
       } else {
         print('Failed to add user');
-        print(response.statusCode);
       }
     } catch (e) {
       print('Error occurred: $e');
+    }
+  }
+
+  Future<void> addGame(
+      List<String> boardStates, String player1Id, String player2Id) async {
+    final response = await http.post(
+      Uri.parse('http://tictacshift.scienceontheweb.net/addGame.php'),
+      body: {
+        'board_states': boardStates.join(','),
+        'player1Id': player1Id,
+        'player2Id': player2Id,
+      },
+    );
+
+    if (response.statusCode == 200) {
+      print("Game added successfully");
+    } else {
+      print('Failed to add game');
+    }
+  }
+
+  Future<List<String>> getUserById(String uid) async {
+    final response = await http.get(
+      Uri.parse(
+          'http://tictacshift.scienceontheweb.net/getUserById.php?uid=$uid'),
+    );
+
+    if (response.statusCode == 200) {
+      var data = json.decode(response.body);
+      return [
+        data['username'],
+        data['email'],
+        data['uid'],
+        data['games_won'],
+        data['games_played'],
+        data['win_streak'],
+        data['games_lost'],
+        data['total_time_played'],
+        data['highest_streak']
+      ];
+    } else {
+      print('Failed to fetch user');
+      return [];
+    }
+  }
+
+  Future<void> updateUser(String uid, bool won, int timePlayedSeconds) async {
+    final response = await http.post(
+      Uri.parse('http://tictacshift.scienceontheweb.net/update_user_stats.php'),
+      body: {
+        'uid': uid,
+        'won': won.toString(),
+        'time_played_seconds': timePlayedSeconds.toString(),
+      },
+    );
+
+    if (response.statusCode == 200) {
+      var data = json.decode(response.body);
+      print(data);
+    } else {
+      print('Failed to update user');
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> getGamesByUserId(String uid) async {
+    final response = await http.get(
+      Uri.parse(
+          'http://tictacshift.scienceontheweb.net/getGamesByUserId.php?uid=$uid'),
+    );
+
+    // Print the raw response body for debugging
+    print('Response body: ${response.body}');
+
+    if (response.statusCode == 200) {
+      try {
+        // Decode the JSON response
+        List<dynamic> data = json.decode(response.body);
+
+        // Check if the data is a list of maps
+        if (data is List) {
+          return data.map((item) => item as Map<String, dynamic>).toList();
+        } else {
+          print('Unexpected data format: ${data.runtimeType}');
+          return [];
+        }
+      } catch (e) {
+        // Print the exception if JSON decoding fails
+        print('Error decoding JSON: $e');
+        return [];
+      }
+    } else {
+      print('Failed to fetch games. Status code: ${response.statusCode}');
+      return [];
     }
   }
 }

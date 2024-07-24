@@ -52,22 +52,25 @@ class _LocalGameState extends State<LocalGame> {
             Expanded(
               child: Center(
                 child: BoardWidget(
-                    board: board,
-                    currentPlayer: currentTurn,
-                    onTileTap: (index) {
-                      if (!_hasWon() && board[index] == '') {
-                        setState(() {
-                          _makeMove(index);
-                        });
+                  board: board,
+                  onTileTap: (index) {
+                    if (!_hasWon() && board[index] == '') {
+                      setState(() {
+                        _makeMove(index);
+                      });
+                    }
+                    if (_hasWon()) {
+                      if (currentTurn == "O") {
+                        showVictoryDialog(context, "Player1");
+                      } else {
+                        showVictoryDialog(context, "Player2");
                       }
-                      if (_hasWon()) {
-                        if (currentTurn == "O") {
-                          showVictoryDialog(context, "Player1");
-                        } else {
-                          showVictoryDialog(context, "Player2");
-                        }
-                      }
-                    }),
+                    }
+                  },
+                  lastThirdMoveX: getLastThirdMoves()['X']!,
+                  lastThirdMoveO: getLastThirdMoves()['O']!,
+                  moveCount: moveCount,
+                ),
               ),
             )
           ],
@@ -139,5 +142,13 @@ class _LocalGameState extends State<LocalGame> {
         .split('')
         .map((cell) => cell == '-' ? '' : cell)
         .toList();
+  }
+
+  Map<String, int> getLastThirdMoves() {
+    int lastThirdMoveIndex = (moveCount ~/ 2) % 3;
+    return {
+      'X': player1[lastThirdMoveIndex],
+      'O': player2[lastThirdMoveIndex],
+    };
   }
 }
