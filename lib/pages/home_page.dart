@@ -9,6 +9,7 @@ import 'package:tic_tac_shift/pages/settings_page.dart';
 import 'package:tic_tac_shift/services/auth_service.dart';
 
 import 'account_page.dart';
+import 'ai_difficulty_page.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -17,79 +18,121 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final AuthService auth = AuthService();
     final userInfo = Provider.of<UserModel>(context);
+
     return Scaffold(
       backgroundColor: Colors.brown[50],
       appBar: AppBar(
-        backgroundColor: Colors.brown[400],
+        backgroundColor: Colors.redAccent,
         foregroundColor: Colors.white,
         title: const Text("Home Page"),
         actions: [
-          ElevatedButton.icon(
-            label: const Text("LogOut"),
+          IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () async {
               await auth.signOut();
             },
           ),
-          TextButton.icon(
-            label: const Text(""),
-            icon:
-                const Icon(Icons.account_circle_outlined, color: Colors.white),
+          IconButton(
+            icon: const Icon(Icons.account_circle_outlined),
             onPressed: () {
-              Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => AccountPage(playerId: userInfo)));
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => AccountPage(playerId: userInfo),
+                ),
+              );
             },
           ),
-          TextButton.icon(
-            label: const Text(""),
-            icon: const Icon(Icons.settings, color: Colors.white),
+          IconButton(
+            icon: const Icon(Icons.settings),
             onPressed: () {
-              Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => const SettingsPage(),
-              ));
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => const SettingsPage(),
+                ),
+              );
             },
-          )
+          ),
         ],
       ),
-      body: SingleChildScrollView(
-        child: Center(
-            child: Column(
-          children: [
-            ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => OnlineGame(playerId: userInfo)));
-                },
-                child: const Text("Start Online Match")),
-            const SizedBox(height: 60),
-            ElevatedButton(
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              _buildElevatedButton(
+                context,
+                label: "Start Online Match",
                 onPressed: () {
                   Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => LocalGame()));
+                    MaterialPageRoute(
+                      builder: (context) => OnlineGame(playerId: userInfo),
+                    ),
+                  );
                 },
-                child: const Text("Local play")),
-            const SizedBox(height: 60),
-            ElevatedButton(
-                onPressed: () {}, child: const Text("Play against AI")),
-            const SizedBox(height: 60),
-            ElevatedButton(
+              ),
+              _buildElevatedButton(
+                context,
+                label: "Local Play",
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => LocalGame(),
+                    ),
+                  );
+                },
+              ),
+              _buildElevatedButton(
+                context,
+                label: "Play Against AI",
                 onPressed: () {
                   Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => FriendInvite(),
-                  ));
+                      builder: (context) => AiDifficultyPage()));
                 },
-                child: const Text("Invite Friend")),
-            const SizedBox(height: 60),
-            //change this to listview with the last 10 games
-            ElevatedButton(
+              ),
+              _buildElevatedButton(
+                context,
+                label: "Invite Friend",
                 onPressed: () {
-                  Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => GameHistoryPage(playerId: userInfo),
-                  ));
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => FriendInvite(),
+                    ),
+                  );
                 },
-                child: const Text("Game History")),
-          ],
-        )),
+              ),
+              _buildElevatedButton(
+                context,
+                label: "Game History",
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => GameHistoryPage(playerId: userInfo),
+                    ),
+                  );
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildElevatedButton(BuildContext context,
+      {required String label, required VoidCallback onPressed}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 10.0),
+      child: ElevatedButton(
+        onPressed: onPressed,
+        child: Text(label),
+        style: ElevatedButton.styleFrom(
+          padding: const EdgeInsets.symmetric(vertical: 16.0),
+          textStyle: const TextStyle(fontSize: 18),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
       ),
     );
   }

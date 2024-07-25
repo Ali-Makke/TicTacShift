@@ -32,11 +32,11 @@ class _OnlineGameState extends State<OnlineGame> {
   bool hasQuitMatch = false;
   List<int> player1 = [0, 0, 0];
   List<int> player2 = [0, 0, 0];
-  int player1TimeRemaining = 200;
-  int player2TimeRemaining = 200;
+  double player1TimeRemaining = 110;
+  double player2TimeRemaining = 110;
   String boardState = '--------- 0 X';
   List<String> board = List.filled(9, '');
-  List<String> boardStates = ['--------- 0 X'];
+  List<String> boardStates = [];
   final DatabaseService _dbService = DatabaseService();
   StreamSubscription<DocumentSnapshot>? _gameSubscription;
   String image =
@@ -61,7 +61,7 @@ class _OnlineGameState extends State<OnlineGame> {
         appBar: AppBar(
           title: const Text("Online Match"),
           centerTitle: true,
-          backgroundColor: Colors.pink[400],
+          backgroundColor: Colors.redAccent,
           automaticallyImplyLeading: false,
           leading: IconButton(
               onPressed: () async {
@@ -254,6 +254,7 @@ class _OnlineGameState extends State<OnlineGame> {
         .snapshots()
         .listen((snapshot) async {
       if (snapshot.exists) {
+        if (!mounted) return;
         setState(() {
           if (!playersReady) {
             playersReady = (snapshot['status'] == 'ready');
@@ -271,14 +272,26 @@ class _OnlineGameState extends State<OnlineGame> {
           player2Id = snapshot['player2Id'];
           moveCount = snapshot['moveCount'];
           boardState = snapshot['boardState'];
+          var l1 = (snapshot['boardStates'] as List<dynamic>)
+              .map((e) => e as String)
+              .toList();
           currentTurn = snapshot['currentTurn'];
           player1Letter = snapshot['player1Letter'];
           player2Letter = snapshot['player2Letter'];
-          player1TimeRemaining = snapshot['player1TimeRemaining'];
-          player2TimeRemaining = snapshot['player2TimeRemaining'];
+          player1TimeRemaining = (snapshot['player1TimeRemaining'].toDouble());
+          player2TimeRemaining = (snapshot['player2TimeRemaining'].toDouble());
           board = _stringToBoard(boardState);
           if (_hasWon() || hasQuitMatch) {
             _timer?.cancel();
+          }
+          if (player1Letter == currentTurn &&
+              player1Id == widget.playerId.uid &&
+              moveCount > 1) {
+            boardStates.add(l1.last);
+          }
+          if (player2Letter == currentTurn &&
+              player2Id == widget.playerId.uid) {
+            boardStates.add(l1.last);
           }
         });
       }
@@ -315,48 +328,39 @@ class _OnlineGameState extends State<OnlineGame> {
   void _startTimer() {
     _timer?.cancel();
 
-    // Record the start time
-    int startTime = DateTime.now().millisecondsSinceEpoch;
-
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+    _timer = Timer.periodic(const Duration(milliseconds: 100), (timer) {
       setState(() {
-        // Get the current time and calculate the elapsed time in seconds
-        int currentTime = DateTime.now().millisecondsSinceEpoch;
-        int elapsedTime = (currentTime - startTime) ~/
-            1000; // Convert milliseconds to seconds
-
-        // Update the time remaining based on elapsed time
         if (currentTurn == player1Letter) {
-          player1TimeRemaining -= elapsedTime;
-        } else {
-          player2TimeRemaining -= elapsedTime;
-        }
-
-        // Update the start time for the next interval
-        startTime = currentTime;
-
-        // Check if time has run out
-        if (player1TimeRemaining <= 0 || player2TimeRemaining <= 0) {
-          _timer?.cancel();
-          setState(() {
-            hasQuitMatch = true; // Time ran out
-          });
+          player1TimeRemaining -= 0.1;
           if (player1TimeRemaining <= 0) {
-            _dbService.updateUser(
-                player2Id!, true, (player2TimeRemaining - 300));
-            _dbService.updateUser(
-                player1Id!, false, (player1TimeRemaining - 300));
-            showVictoryDialog(context, username2);
-          } else if (player2TimeRemaining <= 0) {
-            _dbService.updateUser(
-                player2Id!, false, (player2TimeRemaining - 300));
-            _dbService.updateUser(
-                player1Id!, true, (player1TimeRemaining - 300));
-            showVictoryDialog(context, username1);
+            player1TimeRemaining = 0;
+            _timeOut();
+          }
+        } else {
+          player2TimeRemaining -= 0.1;
+          if (player2TimeRemaining <= 0) {
+            player2TimeRemaining = 0;
+            _timeOut();
           }
         }
       });
     });
+  }
+
+  void _timeOut() {
+    _timer?.cancel();
+    setState(() {
+      hasQuitMatch = true;
+    });
+    if (player1TimeRemaining <= 0) {
+      _dbService.updateUser(player2Id!, true, (player2TimeRemaining - 300));
+      _dbService.updateUser(player1Id!, false, (player1TimeRemaining - 300));
+      showVictoryDialog(context, username2);
+    } else if (player2TimeRemaining <= 0) {
+      _dbService.updateUser(player2Id!, false, (player2TimeRemaining - 300));
+      _dbService.updateUser(player1Id!, true, (player1TimeRemaining - 300));
+      showVictoryDialog(context, username1);
+    }
   }
 
   void updateSqlDb() async {

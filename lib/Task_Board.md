@@ -1,25 +1,24 @@
 # TO DO Reminders before submission
 
-*** add back main file without api key
 *** separately send back configuration file
 *** separately send back api key(s)
 
 # {*(important) -(less important)}
 # To DO:
 
-    -don't let user send more then 5 challenge links within an hour unless the link was opened
-    -check label in the settings button in the home_page 
+    -don't let user send more then 5 challenge links within an hour unless the link was opened 
     -add sound effects(in game)
     -user can add avatar
-    -implement ai match
-    -
+    -user can change username
+    -user can change password
+    *remove debug banner
 
 # In Progress:
 
     -what are the edge cases(eg: what happens if the player disconnects mid_game)
     *implement game logic
         *implement invite friend match
-    ***fix board state bug not updating correctly
+    -implement ai match
     -
 
 # Review/Test:
@@ -71,6 +70,8 @@
     *fix color bug(update lastThird move indices for each player)
     *fix time stoped working
     -
+    *** add back main file without api key
+    *** fix board state bug not updating correctly
 
 Database initial planning:
 -a login and sign up, both anonymously and by email and password.

@@ -10,7 +10,7 @@ const textInputDecoration = InputDecoration(
 class PlayerInfo extends StatelessWidget {
   final String name;
   final String icon;
-  final int timeRemaining;
+  final double timeRemaining;
   final bool isCurrentTurn;
 
   const PlayerInfo({
@@ -52,7 +52,7 @@ class PlayerInfo extends StatelessWidget {
                 ),
               ),
               Text(
-                'Time Left: $timeRemaining',
+                'Time Left: ${timeRemaining.round()}',
                 style: TextStyle(
                   fontSize: 14,
                   color: isCurrentTurn ? Colors.blue : Colors.black,
