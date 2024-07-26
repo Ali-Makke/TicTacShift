@@ -7,10 +7,6 @@
 # To DO:
 
     -don't let user send more then 5 challenge links within an hour unless the link was opened 
-    -add sound effects(in game)
-    -user can add avatar
-    -user can change username
-    -user can change password
     *remove debug banner
 
 # In Progress:
@@ -19,6 +15,10 @@
     *implement game logic
         *implement invite friend match
     -implement ai match
+    -add sound effects(in game)
+    -user can add avatar
+    -user can change username
+    -user can change password
     -
 
 # Review/Test:
@@ -69,9 +69,12 @@
     *implement stats and update after each game
     *fix color bug(update lastThird move indices for each player)
     *fix time stoped working
-    -
+    -leader board implementation
     *** add back main file without api key
     *** fix board state bug not updating correctly
+    ***
+    ---------- Major game turn win bug(random player wins(fliped turns and game creater)) ------------
+    ***
 
 Database initial planning:
 -a login and sign up, both anonymously and by email and password.
