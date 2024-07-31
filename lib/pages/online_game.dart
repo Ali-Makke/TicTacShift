@@ -7,6 +7,7 @@ import 'package:tic_tac_shift/models/user_model.dart';
 import 'package:tic_tac_shift/services/database.dart';
 
 import '../common/constants.dart';
+import '../services/sound_service.dart';
 
 class OnlineGame extends StatefulWidget {
   final UserModel playerId;
@@ -30,14 +31,15 @@ class _OnlineGameState extends State<OnlineGame> {
   String currentTurn = 'X';
   bool playersReady = false;
   bool hasQuitMatch = false;
-  List<int> player1 = [0, 0, 0];
-  List<int> player2 = [0, 0, 0];
+  List<int> player1Indecies = [0, 0, 0];
+  List<int> player2Indecies = [0, 0, 0];
   double player1TimeRemaining = 110;
   double player2TimeRemaining = 110;
   String boardState = '--------- 0 X';
   List<String> board = List.filled(9, '');
   List<String> boardStates = [];
   final DatabaseService _dbService = DatabaseService();
+  final player = SoundManager();
   StreamSubscription<DocumentSnapshot>? _gameSubscription;
   String image =
       "https://plus.unsplash.com/premium_vector-1682269287900-d96e9a6c188b?q=80&w=1800&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D";
@@ -75,8 +77,8 @@ class _OnlineGameState extends State<OnlineGame> {
                     player1TimeRemaining,
                     player2TimeRemaining,
                     hasQuitMatch,
-                    player1,
-                    player2);
+                    player1Indecies,
+                    player2Indecies);
                 _timer?.cancel();
                 _gameSubscription?.cancel();
                 Navigator.of(context).pop();
@@ -124,26 +126,13 @@ class _OnlineGameState extends State<OnlineGame> {
                                   _makeMove(index);
                                 });
                               }
+                              player.playClickSound();
                             }
                             if (!hasQuitMatch && _hasWon()) {
-                              if (_hasWon()) {
-                                boardStates.add(boardState);
-                              }
+                              boardStates.add(boardState);
                               hasQuitMatch = true;
-                              updateSqlDb();
-                              if (player2Letter == currentTurn) {
-                                _dbService.updateUser(player2Id!, true,
-                                    (player2TimeRemaining - 300));
-                                _dbService.updateUser(player1Id!, false,
-                                    (player1TimeRemaining - 300));
-                                showVictoryDialog(context, username2);
-                              } else {
-                                _dbService.updateUser(player2Id!, false,
-                                    (player2TimeRemaining - 300));
-                                _dbService.updateUser(player1Id!, true,
-                                    (player1TimeRemaining - 300));
-                                showVictoryDialog(context, username1);
-                              }
+                              currentTurn = (currentTurn == 'X') ? 'O' : 'X';
+                              updateUserStats();
                               _timer?.cancel();
                               _gameSubscription?.cancel();
                             }
@@ -173,8 +162,8 @@ class _OnlineGameState extends State<OnlineGame> {
           player1TimeRemaining,
           player2TimeRemaining,
           hasQuitMatch,
-          player1,
-          player2);
+          player1Indecies,
+          player2Indecies);
       board = _stringToBoard(boardState);
       if (!_hasWon()) {
         _startTimer();
@@ -188,14 +177,14 @@ class _OnlineGameState extends State<OnlineGame> {
     if (board[index] == '') {
       if (currentTurn == 'X') {
         if (moveCount >= 6) {
-          board[player1[lastThirdMoveIndex]] = '';
+          board[player1Indecies[lastThirdMoveIndex]] = '';
         }
-        player1[lastThirdMoveIndex] = index;
+        player1Indecies[lastThirdMoveIndex] = index;
       } else if (currentTurn == 'O') {
         if (moveCount >= 6) {
-          board[player2[lastThirdMoveIndex]] = '';
+          board[player2Indecies[lastThirdMoveIndex]] = '';
         }
-        player2[lastThirdMoveIndex] = index;
+        player2Indecies[lastThirdMoveIndex] = index;
       }
       board[index] = currentTurn;
       currentTurn = (currentTurn == 'X') ? 'O' : 'X';
@@ -205,8 +194,8 @@ class _OnlineGameState extends State<OnlineGame> {
   Map<String, int> getLastThirdMoves() {
     int lastThirdMoveIndex = (moveCount ~/ 2) % 3;
     return {
-      'X': player1[lastThirdMoveIndex],
-      'O': player2[lastThirdMoveIndex],
+      'X': player1Indecies[lastThirdMoveIndex],
+      'O': player2Indecies[lastThirdMoveIndex],
     };
   }
 
@@ -262,10 +251,10 @@ class _OnlineGameState extends State<OnlineGame> {
             _startTimer();
             getUsername();
           }
-          player1 = (snapshot['player1'] as List<dynamic>)
+          player1Indecies = (snapshot['player1'] as List<dynamic>)
               .map((e) => e as int)
               .toList();
-          player2 = (snapshot['player2'] as List<dynamic>)
+          player2Indecies = (snapshot['player2'] as List<dynamic>)
               .map((e) => e as int)
               .toList();
           player1Id = snapshot['player1Id'];
@@ -353,13 +342,9 @@ class _OnlineGameState extends State<OnlineGame> {
       hasQuitMatch = true;
     });
     if (player1TimeRemaining <= 0) {
-      _dbService.updateUser(player2Id!, true, (player2TimeRemaining - 300));
-      _dbService.updateUser(player1Id!, false, (player1TimeRemaining - 300));
-      showVictoryDialog(context, username2);
+      updateUserStats();
     } else if (player2TimeRemaining <= 0) {
-      _dbService.updateUser(player2Id!, false, (player2TimeRemaining - 300));
-      _dbService.updateUser(player1Id!, true, (player1TimeRemaining - 300));
-      showVictoryDialog(context, username1);
+      updateUserStats();
     }
   }
 
@@ -370,5 +355,23 @@ class _OnlineGameState extends State<OnlineGame> {
   void getUsername() async {
     username1 = (await _dbService.getUserById("$player1Id"))[0];
     username2 = (await _dbService.getUserById("$player2Id"))[0];
+  }
+
+  void updateUserStats() {
+    if (player2Letter == currentTurn && player2Id == widget.playerId.uid) {
+      updateSqlDb();
+      _dbService.updateUser(player2Id!, true, (110 - player2TimeRemaining));
+      _dbService.updateUser(player1Id!, false, (110 - player1TimeRemaining));
+    } else if (player1Letter == currentTurn &&
+        player1Id == widget.playerId.uid) {
+      updateSqlDb();
+      _dbService.updateUser(player2Id!, false, (110 - player2TimeRemaining));
+      _dbService.updateUser(player1Id!, true, (110 - player1TimeRemaining));
+    }
+    if (player2Id == currentTurn) {
+      showVictoryDialog(context, username2);
+    } else {
+      showVictoryDialog(context, username1);
+    }
   }
 }

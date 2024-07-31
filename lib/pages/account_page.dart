@@ -23,11 +23,14 @@ class _AccountPageState extends State<AccountPage> {
   String highestStreak = "";
   String totalTimePlayed = "";
   bool pageReady = false;
+  List<dynamic> topScores = [];
+  Map<String, dynamic>? userScore;
 
   @override
   void initState() {
     super.initState();
     getUsername(widget.playerId.uid!);
+    getLeaderboard(widget.playerId.uid!);
   }
 
   @override
@@ -77,6 +80,14 @@ class _AccountPageState extends State<AccountPage> {
     });
   }
 
+  void getLeaderboard(String uid) async {
+    final result = await _dbService.getLeaderboardData(uid);
+    setState(() {
+      topScores = result['top_scores'];
+      userScore = result['user_score'];
+    });
+  }
+
   Widget _buildUserInfoRow(IconData icon, String text) {
     return Row(
       children: [
@@ -113,56 +124,131 @@ class _AccountPageState extends State<AccountPage> {
       padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
         color: Colors.blueAccent.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(10.0),
+        borderRadius: BorderRadius.circular(12.0),
         boxShadow: [
           BoxShadow(
             color: Colors.black26.withOpacity(0.1),
-            blurRadius: 1.0,
-            offset: const Offset(0, 2),
+            blurRadius: 6.0,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
-      child: Text(
-        '''
-Games Played: $gamesPlayed
-Games Won: $gamesWon
-Games Lost: $gamesLost
-Win Streak: $winStreak
-Highest Streak: $highestStreak
-Total Time Played: $totalTimePlayed
-        ''',
-        style: const TextStyle(
-          fontSize: 16,
-          color: Colors.blueAccent,
-        ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildStatTile(Icons.play_arrow, 'Games Played', gamesPlayed),
+          _buildStatTile(Icons.star, 'Games Won', gamesWon),
+          _buildStatTile(Icons.cancel, 'Games Lost', gamesLost),
+          _buildStatTile(Icons.trending_up, 'Win Streak', winStreak),
+          _buildStatTile(Icons.trending_up, 'Highest Streak', highestStreak),
+          _buildStatTile(Icons.timer, 'Total Time Played', totalTimePlayed),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStatTile(IconData icon, String title, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: Row(
+        children: [
+          Icon(icon, color: Colors.blueAccent, size: 24.0),
+          const SizedBox(width: 12.0),
+          Expanded(
+            child: Text(
+              title,
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+                color: Colors.black87,
+              ),
+            ),
+          ),
+          Text(
+            value,
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+              color: Colors.blueAccent,
+            ),
+          ),
+        ],
       ),
     );
   }
 
   Widget _buildLeaderboardContainer() {
     return Container(
-      width: double.infinity,
-      height: 200,
+      padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
         color: Colors.blueAccent.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(10.0),
+        borderRadius: BorderRadius.circular(12.0),
         boxShadow: [
           BoxShadow(
             color: Colors.black26.withOpacity(0.1),
-            blurRadius: 4.0,
-            offset: const Offset(0, 2),
+            blurRadius: 6.0,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
-      child: const Center(
-        child: Text(
-          "Leader Board Data",
-          style: TextStyle(
-            fontSize: 16,
-            color: Colors.blueAccent,
-          ),
-        ),
-      ),
+      child: userScore != null
+          ? ListView.builder(
+              shrinkWrap: true,
+              itemCount: topScores.length + 1,
+              itemBuilder: (context, index) {
+                if (index < topScores.length) {
+                  final score = topScores[index];
+                  return Card(
+                    margin: const EdgeInsets.symmetric(vertical: 4.0),
+                    child: ListTile(
+                      contentPadding:
+                          const EdgeInsets.symmetric(horizontal: 16.0),
+                      leading: CircleAvatar(
+                        backgroundColor: Colors.blueAccent,
+                        foregroundColor: Colors.white,
+                        child: Text('${index + 1}'),
+                      ),
+                      title: Text(
+                        score['username']!,
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      subtitle: Text('Score: ${score['score']}'),
+                      trailing: Text(
+                        'Rank: ${index + 1}',
+                        style: const TextStyle(color: Colors.grey),
+                      ),
+                    ),
+                  );
+                } else {
+                  return Card(
+                    margin: const EdgeInsets.symmetric(vertical: 4.0),
+                    child: ListTile(
+                      contentPadding:
+                          const EdgeInsets.symmetric(horizontal: 16.0),
+                      leading: CircleAvatar(
+                        backgroundColor: Colors.blueAccent.withOpacity(0.2),
+                        child: Icon(Icons.star, color: Colors.yellow[700]),
+                      ),
+                      title: Text(
+                        'You: ${userScore!['username']}',
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      subtitle: Text('Your Score: ${userScore!['score']}'),
+                      trailing: Text(
+                        'Your Rank: ${userScore!['rank']}',
+                        style: const TextStyle(color: Colors.grey),
+                      ),
+                    ),
+                  );
+                }
+              },
+            )
+          : const Center(
+              child: Text(
+                'No leaderboard data available',
+                style: TextStyle(fontSize: 16, color: Colors.grey),
+              ),
+            ),
     );
   }
 }

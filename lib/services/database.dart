@@ -237,6 +237,7 @@ class DatabaseService {
 
       if (response.statusCode == 200) {
         print('User Stats updated');
+        print(response.body);
       } else {
         print('Failed to update user');
       }
@@ -260,6 +261,20 @@ class DatabaseService {
     } catch (e) {
       print('Error occurred: $e');
       return [];
+    }
+  }
+
+  Future<Map<String, dynamic>> getLeaderboardData(String uid) async {
+    final url = Uri.http(_baseUrl, '/get_leaderboard_info.php');
+    final response = await http.post(
+      url,
+      body: {'uid': uid},
+    );
+
+    if (response.statusCode == 200) {
+      return json.decode(response.body);
+    } else {
+      throw Exception('Failed to load leaderboard data');
     }
   }
 }

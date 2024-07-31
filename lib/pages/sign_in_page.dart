@@ -80,8 +80,6 @@ class _SignInPageState extends State<SignInPage> {
                         onPressed: () async {
                           if (_formKey.currentState!.validate()) {
                             setState(() => loading = true);
-                            await Future.delayed(
-                                const Duration(milliseconds: 1100));
                             dynamic userInfo = await _auth.signInEmailnPassword(
                                 _email, _password);
                             if (userInfo == null) {

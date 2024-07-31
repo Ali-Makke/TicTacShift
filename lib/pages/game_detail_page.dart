@@ -21,7 +21,6 @@ class _GameDetailPageState extends State<GameDetailPage> {
     _boardStates = widget.game['board_states'].split(',');
     _processedBoardStates =
         _boardStates[_currentStep].substring(0, 9).split("");
-    print(_processedBoardStates);
     if (_boardStates.isEmpty) {
       _boardStates = ['---------'];
     }

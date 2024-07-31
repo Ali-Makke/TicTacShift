@@ -1,84 +1,63 @@
-// import 'package:cloud_firestore/cloud_firestore.dart';
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
+void main() async {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const MaterialApp(
+      home: TestingFile1(),
+    );
+  }
+}
+
 class TestingFile1 extends StatefulWidget {
-  const TestingFile1({Key? key}) : super(key: key);
+  const TestingFile1({super.key});
 
   @override
   State<TestingFile1> createState() => _TestingFile1State();
 }
 
 class _TestingFile1State extends State<TestingFile1> {
-  String mydata = "";
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: const Text("REST API Call"),
-        backgroundColor: Colors.blue,
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          getUser(1);
-        },
-        child: const Icon(Icons.refresh),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text("Data: $mydata"),
-          ],
-        ),
-      ),
+      body: ElevatedButton(
+          onPressed: () {
+            updateUser("6Mh40R3AO5VE2Y3DPVZy4Nrwwd23", true, 100);
+            updateUser("Dgavk2N1lnZq5jv6seahxQo5URo1", false, 100);
+          },
+          child: const Text("show")),
     );
   }
+}
 
-  Future<void> getUser(int uid) async {
-    try {
-      final response = await http.get(
-        Uri.parse(
-            'http://tictacshift.infinityfreeapp.com/get_user.php?uid=$uid'),
-      );
+const String _baseUrl = "tictacshift.scienceontheweb.net";
 
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        if (data['success'] == null || data['success'] == false) {
-          setState(() {
-            mydata = 'Failed to load user: ${data['error']}';
-          });
-        } else {
-          setState(() {
-            mydata =
-                'Username: ${data['username']}, Email: ${data['email']}'; // Adjust based on your data structure
-          });
-        }
-      } else {
-        setState(() {
-          mydata = 'Failed to load user: Status Code ${response.statusCode}';
-        });
-      }
-    } catch (e) {
-      setState(() {
-        mydata = 'Failed to load user: $e';
-      });
+Future<void> updateUser(String uid, bool won, double timePlayedSeconds) async {
+  try {
+    final url = Uri.http(_baseUrl, '/update_user_stats.php');
+    final response = await http.post(
+      url,
+      body: {
+        'uid': uid,
+        'won': won.toString(),
+        'time_played_seconds': timePlayedSeconds.toString(),
+      },
+    );
+
+    if (response.statusCode == 200) {
+      print('User Stats updated');
+      print(response.body);
+    } else {
+      print('Failed to update user');
     }
+  } catch (e) {
+    print('Error occurred: $e');
   }
-
-// void fetchData() async {
-//   const url = "https://randomuser.me/api/?results=1";
-//   final uri = Uri.parse(url);
-//   final response = await http.get(uri);
-//   final body = response.body;
-//   final jason = jsonDecode(body);
-//   // users = jason['results'];
-//   // print(users);
-//   // setState(() {
-//   //   mydata = users.toString();
-//   });
-// }
 }

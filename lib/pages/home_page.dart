@@ -77,7 +77,7 @@ class HomePage extends StatelessWidget {
                 onPressed: () {
                   Navigator.of(context).push(
                     MaterialPageRoute(
-                      builder: (context) => LocalGame(),
+                      builder: (context) => const LocalGame(),
                     ),
                   );
                 },
@@ -87,7 +87,7 @@ class HomePage extends StatelessWidget {
                 label: "Play Against AI",
                 onPressed: () {
                   Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => AiDifficultyPage()));
+                      builder: (context) => const AiDifficultyPage()));
                 },
               ),
               _buildElevatedButton(
@@ -96,7 +96,7 @@ class HomePage extends StatelessWidget {
                 onPressed: () {
                   Navigator.of(context).push(
                     MaterialPageRoute(
-                      builder: (context) => FriendInvite(),
+                      builder: (context) => const FriendInvite(),
                     ),
                   );
                 },
@@ -125,7 +125,6 @@ class HomePage extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 10.0),
       child: ElevatedButton(
         onPressed: onPressed,
-        child: Text(label),
         style: ElevatedButton.styleFrom(
           padding: const EdgeInsets.symmetric(vertical: 16.0),
           textStyle: const TextStyle(fontSize: 18),
@@ -133,6 +132,7 @@ class HomePage extends StatelessWidget {
             borderRadius: BorderRadius.circular(10),
           ),
         ),
+        child: Text(label),
       ),
     );
   }

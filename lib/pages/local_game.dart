@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tic_tac_shift/common/constants.dart';
+import 'package:tic_tac_shift/services/sound_service.dart';
 
 class LocalGame extends StatefulWidget {
   const LocalGame({super.key});
@@ -15,6 +16,7 @@ class _LocalGameState extends State<LocalGame> {
   List<int> player1 = [0, 0, 0];
   List<int> player2 = [0, 0, 0];
   String boardState = '--------- 0 X';
+  final player = SoundManager();
   String image =
       "https://plus.unsplash.com/premium_vector-1682269287900-d96e9a6c188b?q=80&w=1800&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D";
 
@@ -24,7 +26,7 @@ class _LocalGameState extends State<LocalGame> {
       appBar: AppBar(
         title: const Text("Local Match"),
         centerTitle: true,
-        backgroundColor: Colors.pink[400],
+        backgroundColor: Colors.redAccent,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -58,6 +60,7 @@ class _LocalGameState extends State<LocalGame> {
                       setState(() {
                         _makeMove(index);
                       });
+                      player.playClickSound();
                     }
                     if (_hasWon()) {
                       if (currentTurn == "O") {

@@ -17,7 +17,7 @@ class _FriendInviteState extends State<FriendInvite> {
     return Scaffold(
       backgroundColor: Colors.brown[50],
       appBar: AppBar(
-        backgroundColor: Colors.brown[400],
+        backgroundColor: Colors.redAccent,
         foregroundColor: Colors.white,
         title: const Text("Challenge Friend"),
       ),

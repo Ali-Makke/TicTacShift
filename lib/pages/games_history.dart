@@ -45,7 +45,7 @@ class _GameHistoryPageState extends State<GameHistoryPage> {
               itemBuilder: (context, index) {
                 final game = _games[index];
                 return ListTile(
-                  title: Text('Game ${game['gid']}'),
+                  title: Text('Game $index'),
                   onTap: () {
                     Navigator.push(
                       context,
