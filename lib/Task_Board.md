@@ -22,7 +22,6 @@
     -user can add avatar
     -user can change username
     -user can change password
-    *implement settings page
 
 # Review/Test:
 

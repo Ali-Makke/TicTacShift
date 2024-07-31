@@ -32,7 +32,7 @@ class DatabaseService {
     return false;
   }
 
-  Future searchForUser(String username) async {
+  Future searchForUser(Function(String s) f, String username) async {
     List<String> usernames = [];
     try {
       QuerySnapshot result = await usersCollection
@@ -43,7 +43,13 @@ class DatabaseService {
         var data = docSnapshot.data() as Map<String, dynamic>;
         usernames.add(data['username']);
       }
+      if (usernames.isEmpty) {
+        f("No user by this name");
+      } else {
+        f("Users Found");
+      }
     } catch (e) {
+      f("Error fetching users");
       print(e.toString());
     }
     return usernames;
