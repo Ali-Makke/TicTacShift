@@ -6,20 +6,23 @@
 # {*(important) -(less important)}
 # To DO:
 
-    -don't let user send more then 5 challenge links within an hour unless the link was opened 
+    ***limit all database requests
+    -don't let user send more then 5 challenge links within an hour unless the link was opened
     *remove debug banner
+    *add anonymous user feature 
 
 # In Progress:
 
     -what are the edge cases(eg: what happens if the player disconnects mid_game)
     *implement game logic
         *implement invite friend match
-    -implement ai match
-    -add sound effects(in game)
+    *implement ai match
+        -mid
+        -hard
     -user can add avatar
     -user can change username
     -user can change password
-    -
+    *implement settings page
 
 # Review/Test:
 
@@ -75,6 +78,14 @@
     ***
     ---------- Major game turn win bug(random player wins(fliped turns and game creater)) ------------
     ***
+    -add application icon
+    *implement classic game with dynamic board
+        -add draw case
+        -implement 4x4 board
+    *implement ai match
+        -easy
+    -add sound effects(in game)
+    *fixed sound randomly not working
 
 Database initial planning:
 -a login and sign up, both anonymously and by email and password.

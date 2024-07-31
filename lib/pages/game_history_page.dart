@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../common/constants.dart';
 import '../models/user_model.dart';
 import '../services/database.dart';
 import 'game_detail_page.dart';
@@ -35,8 +36,9 @@ class _GameHistoryPageState extends State<GameHistoryPage> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: const Text("Game History"),
+        title: sandText("Game History"),
         backgroundColor: Colors.redAccent,
+        foregroundColor: Colors.white,
       ),
       body: _games.isEmpty
           ? const Center(child: Text('No games found'))

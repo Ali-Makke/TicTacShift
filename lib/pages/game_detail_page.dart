@@ -32,8 +32,9 @@ class _GameDetailPageState extends State<GameDetailPage> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text('Game ${widget.game['gid']}'),
+        title: sandText('Game ${widget.game['gid']}'),
         backgroundColor: Colors.redAccent,
+        foregroundColor: Colors.white,
       ),
       body: Column(
         children: [
@@ -45,6 +46,7 @@ class _GameDetailPageState extends State<GameDetailPage> {
                 lastThirdMoveX: 0,
                 lastThirdMoveO: 0,
                 moveCount: 0,
+                size: 'Small',
               ),
             ),
           ),

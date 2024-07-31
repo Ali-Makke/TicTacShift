@@ -7,6 +7,10 @@ const textInputDecoration = InputDecoration(
   hintText: "Email",
 );
 
+Widget sandText(String text) {
+  return Text(text, style: GoogleFonts.quicksand(fontSize: 23));
+}
+
 class PlayerInfo extends StatelessWidget {
   final String name;
   final String icon;
@@ -71,7 +75,8 @@ class BoardWidget extends StatelessWidget {
   final Function(int) onTileTap;
   final int lastThirdMoveX;
   final int lastThirdMoveO;
-  final int moveCount; // Add moveCount as an input
+  final int moveCount;
+  final String size;
 
   const BoardWidget({
     super.key,
@@ -80,16 +85,30 @@ class BoardWidget extends StatelessWidget {
     required this.lastThirdMoveX,
     required this.lastThirdMoveO,
     required this.moveCount,
+    required this.size,
   });
 
   @override
   Widget build(BuildContext context) {
+    int crossAxisCount;
+    int boardSize;
+
+    if (size == 'Small') {
+      crossAxisCount = 3;
+      boardSize = 9;
+    } else if (size == 'Big') {
+      crossAxisCount = 4;
+      boardSize = 16;
+    } else {
+      throw ArgumentError('Invalid board size');
+    }
+
     return SizedBox(
-      width: 300,
-      height: 300,
+      width: 400,
+      height: 400,
       child: GridView.count(
-        crossAxisCount: 3,
-        children: List.generate(9, (index) {
+        crossAxisCount: crossAxisCount,
+        children: List.generate(boardSize, (index) {
           Color tileColor = Colors.white;
           if (moveCount >= 6) {
             if (index == lastThirdMoveX) {

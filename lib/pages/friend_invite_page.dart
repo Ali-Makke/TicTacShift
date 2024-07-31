@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:tic_tac_shift/services/database.dart';
 
+import '../common/constants.dart';
+
 class FriendInvite extends StatefulWidget {
   const FriendInvite({super.key});
 
@@ -19,7 +21,7 @@ class _FriendInviteState extends State<FriendInvite> {
       appBar: AppBar(
         backgroundColor: Colors.redAccent,
         foregroundColor: Colors.white,
-        title: const Text("Challenge Friend"),
+        title: sandText("Challenge Friend"),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),

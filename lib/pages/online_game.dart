@@ -61,8 +61,9 @@ class _OnlineGameState extends State<OnlineGame> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text("Online Match"),
+          title: sandText("Online Match"),
           centerTitle: true,
+          foregroundColor: Colors.white,
           backgroundColor: Colors.redAccent,
           automaticallyImplyLeading: false,
           leading: IconButton(
@@ -140,6 +141,7 @@ class _OnlineGameState extends State<OnlineGame> {
                           lastThirdMoveX: getLastThirdMoves()['X']!,
                           lastThirdMoveO: getLastThirdMoves()['O']!,
                           moveCount: moveCount,
+                          size: 'Small',
                         ),
                       ),
                     )
@@ -368,7 +370,7 @@ class _OnlineGameState extends State<OnlineGame> {
       _dbService.updateUser(player2Id!, false, (110 - player2TimeRemaining));
       _dbService.updateUser(player1Id!, true, (110 - player1TimeRemaining));
     }
-    if (player2Id == currentTurn) {
+    if (player2Letter == currentTurn) {
       showVictoryDialog(context, username2);
     } else {
       showVictoryDialog(context, username1);

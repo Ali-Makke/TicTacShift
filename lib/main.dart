@@ -2,8 +2,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tic_tac_shift/default_options.dart';
-import 'package:tic_tac_shift/pages/wrapper.dart';
 import 'package:tic_tac_shift/services/auth_service.dart';
+import 'package:tic_tac_shift/wrapper.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

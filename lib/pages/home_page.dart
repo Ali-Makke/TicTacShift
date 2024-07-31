@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tic_tac_shift/common/constants.dart';
 import 'package:tic_tac_shift/models/user_model.dart';
-import 'package:tic_tac_shift/pages/friend_invite.dart';
-import 'package:tic_tac_shift/pages/games_history.dart';
+import 'package:tic_tac_shift/pages/friend_invite_page.dart';
+import 'package:tic_tac_shift/pages/game_history_page.dart';
 import 'package:tic_tac_shift/pages/local_game.dart';
 import 'package:tic_tac_shift/pages/online_game.dart';
-import 'package:tic_tac_shift/pages/settings_page.dart';
 import 'package:tic_tac_shift/services/auth_service.dart';
 
 import 'account_page.dart';
 import 'ai_difficulty_page.dart';
+import 'choose_board_size_page.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -24,7 +25,7 @@ class HomePage extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Colors.redAccent,
         foregroundColor: Colors.white,
-        title: const Text("Home Page"),
+        title: sandText("Home Page"),
         actions: [
           IconButton(
             icon: const Icon(Icons.logout),
@@ -38,16 +39,6 @@ class HomePage extends StatelessWidget {
               Navigator.of(context).push(
                 MaterialPageRoute(
                   builder: (context) => AccountPage(playerId: userInfo),
-                ),
-              );
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.settings),
-            onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => const SettingsPage(),
                 ),
               );
             },
@@ -78,6 +69,17 @@ class HomePage extends StatelessWidget {
                   Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (context) => const LocalGame(),
+                    ),
+                  );
+                },
+              ),
+              _buildElevatedButton(
+                context,
+                label: "Classic Play",
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => const ChooseBoardSizePage(),
                     ),
                   );
                 },
@@ -132,7 +134,7 @@ class HomePage extends StatelessWidget {
             borderRadius: BorderRadius.circular(10),
           ),
         ),
-        child: Text(label),
+        child: sandText(label),
       ),
     );
   }

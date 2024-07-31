@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tic_tac_shift/common/loading.dart';
 
+import '../common/constants.dart';
 import '../models/user_model.dart';
 import '../services/database.dart';
 
@@ -39,7 +40,8 @@ class _AccountPageState extends State<AccountPage> {
         ? Scaffold(
             appBar: AppBar(
               centerTitle: true,
-              title: const Text("Account"),
+              title: sandText("Account"),
+              foregroundColor: Colors.white,
               backgroundColor: Colors.redAccent,
             ),
             body: Padding(

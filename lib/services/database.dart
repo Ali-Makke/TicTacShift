@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'dart:convert';
+import 'dart:convert' as convert;
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -200,7 +200,7 @@ class DatabaseService {
       );
 
       if (response.statusCode == 200) {
-        var data = json.decode(response.body);
+        var data = convert.jsonDecode(response.body);
         return [
           data['username'],
           data['email'],
@@ -252,7 +252,7 @@ class DatabaseService {
       final response = await http.post(url, body: {'uid': uid});
 
       if (response.statusCode == 200) {
-        List<dynamic> data = json.decode(response.body);
+        List<dynamic> data = convert.jsonDecode(response.body);
         return data.map((item) => item as Map<String, dynamic>).toList();
       } else {
         print('Failed to fetch games.');
@@ -272,7 +272,7 @@ class DatabaseService {
     );
 
     if (response.statusCode == 200) {
-      return json.decode(response.body);
+      return convert.jsonDecode(response.body);
     } else {
       throw Exception('Failed to load leaderboard data');
     }
