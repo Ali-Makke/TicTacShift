@@ -52,7 +52,8 @@ class _GameHistoryPageState extends State<GameHistoryPage> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => GameDetailPage(game: game),
+                        builder: (context) =>
+                            GameDetailPage(game: game, index: index),
                       ),
                     );
                   },

@@ -6,10 +6,8 @@
 # {*(important) -(less important)}
 # To DO:
 
-    ***limit all database requests
-    -don't let user send more then 5 challenge links within an hour unless the link was opened
-    *remove debug banner
-    *add anonymous user feature 
+    *add anonymous user feature
+    *save userdata in shared preferences so the app can work even if there is no internet connection
 
 # In Progress:
 
@@ -85,6 +83,9 @@
         -easy
     -add sound effects(in game)
     *fixed sound randomly not working
+    ***limit all database requests
+    -don't let user send more then 5 challenge links within an hour unless the link was opened
+    *remove debug banner
 
 Database initial planning:
 -a login and sign up, both anonymously and by email and password.

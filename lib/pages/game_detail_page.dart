@@ -3,8 +3,9 @@ import 'package:tic_tac_shift/common/constants.dart';
 
 class GameDetailPage extends StatefulWidget {
   final Map<String, dynamic> game;
+  final int index;
 
-  const GameDetailPage({super.key, required this.game});
+  const GameDetailPage({super.key, required this.game, required this.index});
 
   @override
   State<GameDetailPage> createState() => _GameDetailPageState();
@@ -32,7 +33,7 @@ class _GameDetailPageState extends State<GameDetailPage> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: sandText('Game ${widget.game['gid']}'),
+        title: sandText('Game ${widget.index}'),
         backgroundColor: Colors.redAccent,
         foregroundColor: Colors.white,
       ),

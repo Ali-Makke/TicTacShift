@@ -68,7 +68,7 @@ class _ClassicGamePageState extends State<ClassicGamePage> {
                       });
                       player.playClickSound();
                     }
-                    if (_isDraw()) {
+                    if (_isDraw() && !hasWon()) {
                       showVictoryDialog(context, "Draw");
                     }
                     if (hasWon()) {

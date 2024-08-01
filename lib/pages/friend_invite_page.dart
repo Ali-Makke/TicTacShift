@@ -99,16 +99,18 @@ class _FriendInviteState extends State<FriendInvite> {
               ),
               const SizedBox(height: 16),
               ElevatedButton(
-                onPressed: () async {
-                  setState(() {
-                    _loading = true;
-                  });
-                  List<String>? result = await DatabaseService()
-                      .searchForUser(found, name.trim().toLowerCase());
-                  setState(() {
-                    data = result;
-                  });
-                },
+                onPressed: _loading
+                    ? null
+                    : () async {
+                        setState(() {
+                          _loading = true;
+                        });
+                        List<String>? result = await DatabaseService()
+                            .searchForUser(found, name.trim().toLowerCase());
+                        setState(() {
+                          data = result;
+                        });
+                      },
                 style: ElevatedButton.styleFrom(
                   padding:
                       const EdgeInsets.symmetric(vertical: 16, horizontal: 32),
